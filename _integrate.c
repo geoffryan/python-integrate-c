@@ -1,8 +1,9 @@
-#include <stdio.h>
 #include <Python.h>
 #define NPY_NO_DEPRECATED_API NPY_1_11_API_VERSION
 #include <numpy/arrayobject.h>
+#include <stdio.h>
 #include "integrate.h"
+#include "glob.h"
 
 
 static char module_docstring[] = 
@@ -11,13 +12,26 @@ static char riemann_docstring[] =
     "Calculate the integral by Riemann Sum";
 static char trapezoid_docstring[] = 
     "Calculate the integral by Trapezoid Sum";
+static char setglob_docstring[] = 
+    "Set global variables";
+static char setglobexact_docstring[] = 
+    "Set global variables with exact value";
+static char printglob_docstring[] = 
+    "Print global variables";
 
 static PyObject *integrate_riemann(PyObject *self, PyObject *args);
 static PyObject *integrate_trapezoid(PyObject *self, PyObject *args);
+static PyObject *integrate_setglob(PyObject *self, PyObject *args);
+static PyObject *integrate_setglobexact(PyObject *self, PyObject *args);
+static PyObject *integrate_printglob(PyObject *self, PyObject *args);
 
 static PyMethodDef module_methods[] = {
     {"riemann", integrate_riemann, METH_VARARGS, riemann_docstring},
     {"trapezoid", integrate_trapezoid, METH_VARARGS, trapezoid_docstring},
+    {"setGlob", integrate_setglob, METH_NOARGS, setglob_docstring},
+    {"setGlobExact", integrate_setglobexact, METH_VARARGS, 
+        setglobexact_docstring},
+    {"printGlob", integrate_printglob, METH_NOARGS, printglob_docstring},
     {NULL, NULL, 0, NULL}};
 
 PyMODINIT_FUNC init_integrate(void)
@@ -103,4 +117,34 @@ static PyObject *integrate_trapezoid(PyObject *self, PyObject *args)
     //Build output
     PyObject *ret = Py_BuildValue("d", I);
     return ret;
+}
+
+static PyObject *integrate_setglob(PyObject *self, PyObject *args)
+{
+    setglob();
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *integrate_setglobexact(PyObject *self, PyObject *args)
+{
+    int i;
+
+    //Parse arguments
+    if(!PyArg_ParseTuple(args, "i", &i))
+        return NULL;
+
+    setglobexact(i);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *integrate_printglob(PyObject *self, PyObject *args)
+{
+    printglob();
+
+    Py_INCREF(Py_None);
+    return Py_None;
 }

@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include "integrate.h"
+#include "glob.h"
 
 double riemann(double *f, double a, double b, int N)
 {
@@ -20,4 +22,9 @@ double trapezoid(double *f, double a, double b, int N)
     I += 0.5*f[N];
 
     return h*I;
+}
+
+void printglob(void)
+{
+    printf("%d\n", glob);
 }
